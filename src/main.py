@@ -10,6 +10,8 @@ origins = [
     "http://ohsmart.dansdemo.nl",
     "https://ohsmart.dansdemo.nl",
     "http://localhost:5489",
+    "http://localhost:3000",
+    "http://localhost"
 ]
 
 app.add_middleware(
