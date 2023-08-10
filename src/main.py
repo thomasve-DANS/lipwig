@@ -35,7 +35,7 @@ def proxy(url: str, response: Response):
             verify=False,
             url=url
         )
-    except requests.exceptions.ConnectionError:
+    except requests.RequestException:
         response.status_code=418
         return ProxyResponse(
             text='URL does not actually resolve, verify that its correct',
