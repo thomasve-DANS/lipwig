@@ -1,5 +1,5 @@
 from json import JSONDecodeError
-from fastapi import FastAPI
+from fastapi import FastAPI, Response
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import requests
@@ -24,21 +24,20 @@ app.add_middleware(
 
 class ProxyResponse(BaseModel):
 
-    status_code: int
     request_url: str
     text: str
     json_response: str | None = None
 
 @app.get("/proxy")
-def proxy(url: str):
+def proxy(url: str, response: Response):
     try:
         response = requests.get(
             verify=False,
             url=url
         )
-    except ConnectionError:
+    except requests.exceptions.ConnectionError:
+        response.status_code=418
         return ProxyResponse(
-            status_code=418,
             text='URL does not actually resolve, verify that its correct',
             request_url=url,
             json_response=None
@@ -48,7 +47,6 @@ def proxy(url: str):
     except JSONDecodeError:
         json = None
     return ProxyResponse(
-        status_code=response.status_code,
         text=response.text,
         request_url=response.request.url,
         json_response=json
